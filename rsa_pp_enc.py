@@ -1,11 +1,9 @@
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
-from Crypto.Cipher import DES
-from Crypto.Cipher import Salsa20
 
 data = "I met aliens in UFO. Here is the map.".encode("utf-8")
-file_out = open("encrypted_data.bin", "wb")
+file_out = open("AES_encrypted_data.bin", "wb")
 
 recipient_key = RSA.import_key(open("receiver.pem").read())
 session_key = get_random_bytes(16)

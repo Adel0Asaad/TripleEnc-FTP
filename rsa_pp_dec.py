@@ -1,7 +1,7 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 
-file_in = open("encrypted_data.bin", "rb")
+file_in = open("AES_encrypted_data.bin", "rb")
 
 private_key = RSA.import_key(open("private.pem").read())
 
