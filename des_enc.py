@@ -14,10 +14,3 @@ ciphertext = cipher_des.encrypt(ptext)
 
 [ file_out.write(x) for x in (key, cipher_des.nonce, ciphertext)]
 file_out.close()
-
-    
-myCipher = DES.new(key, DES.MODE_EAX, nonce=myNonce)
-
-decryption = myCipher.decrypt(myEncMsg)
-
-print(decryption.decode("utf-8"))
