@@ -1,4 +1,3 @@
-from Crypto.Random import get_random_bytes
 from Crypto.Cipher import DES
 
 file_in = open("DES_encrypted_data.bin", "rb")
