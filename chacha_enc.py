@@ -3,7 +3,6 @@ from Crypto.Cipher import ChaCha20_Poly1305
 
 plaintext = "Well well well, look who we have here, if it isn\'t the famous James Bond himself!".encode("utf-8")
 file_out = open("ChaCha_encrypted_data.bin", "wb")
-header = "header".encode("utf-8")
 key = get_random_bytes(32)
 
 #Encryption
