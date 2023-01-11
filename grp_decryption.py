@@ -1,5 +1,4 @@
 from Crypto.PublicKey import RSA
-from Crypto.Random import get_random_bytes
 from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP
 
 def dec_ChaCha(key, nonce, ctext):

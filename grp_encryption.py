@@ -3,7 +3,7 @@ from Crypto.Random import get_random_bytes
 from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP
 
 def enc_ChaCha(ptext):
-    ptext = ptext.encode("utf-8")
+    ptext = ptext
     key = get_random_bytes(32)
 
     #Encryption
@@ -12,7 +12,7 @@ def enc_ChaCha(ptext):
     return key, cipher.nonce, encText
 
 def enc_AES(ptext):
-    ptext = ptext.encode("utf-8")
+    ptext = ptext
     key = get_random_bytes(16)
 
     #Encryption
@@ -21,7 +21,7 @@ def enc_AES(ptext):
     return key, cipher.nonce, encText
 
 def enc_DES(ptext):
-    ptext = ptext.encode("utf-8")
+    ptext = ptext
     key = get_random_bytes(8)
 
     #Encryption
@@ -73,5 +73,7 @@ def encrypt(plaintext):
     key_out.write(encKey)
     key_out.close()
 
-myText = "Helloo"
+file_upload = open("FileToUpload.txt", "rb")
+myText = file_upload.read()
+file_upload.close()
 encrypt(myText)
