@@ -35,12 +35,13 @@ def decrypt():
         [ data_in.read(x) for x in (12, 16, 16, -1) ]
     data_in.close()
     
-    privateKey = RSA.import_key(open("private.pem").read())
+    # privateKey = RSA.import_key(open("owner_private.pem").read())
+    recepient_key = RSA.import_key(open("owner_receiver.pem").read())
     key_in = open("encrypted_key.bin", "rb")
     encKey = key_in.read()
     key_in.close()
     
-    cipher_rsa = PKCS1_OAEP.new(privateKey)
+    cipher_rsa = PKCS1_OAEP.new(recepient_key)
     finalKey = cipher_rsa.decrypt(encKey)
     key1, key2, key3 = \
         [ finalKey[x:y] for x,y in ((0, 32), (32, 48), (48, 56)) ]

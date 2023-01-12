@@ -49,7 +49,7 @@ def download():
     ftp.encoding = "utf-8" 
     # the name of file you want to download from the FTP server 
     filename = "FileToUpload.txt" 
-    with open(filename, "wb") as file: 
+    with open("Downloaded File", "wb") as file: 
         # use FTP's RETR command to download the file 
         ftp.retrbinary(f"RETR {filename}", file.write) 
     # quit and close the connection 

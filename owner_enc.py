@@ -1,9 +1,10 @@
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP
+from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP, Salsa20
+
+################################################ ENCRYPTIONS ################################################
 
 def enc_ChaCha(ptext):
-    ptext = ptext
     key = get_random_bytes(32)
 
     #Encryption
@@ -12,7 +13,6 @@ def enc_ChaCha(ptext):
     return key, cipher.nonce, encText
 
 def enc_AES(ptext):
-    ptext = ptext
     key = get_random_bytes(16)
 
     #Encryption
@@ -21,7 +21,6 @@ def enc_AES(ptext):
     return key, cipher.nonce, encText
 
 def enc_DES(ptext):
-    ptext = ptext
     key = get_random_bytes(8)
 
     #Encryption
@@ -29,7 +28,16 @@ def enc_DES(ptext):
     encText = cipher.encrypt(ptext)
     return key, cipher.nonce, encText
 
-    
+########## MasterKey Enc ##########
+def enc_Salsa(ptext):
+    key = get_random_bytes(32)
+
+    #Encryption
+    cipher = Salsa20.new(key=key)
+    encText = cipher.encrypt(ptext)
+    return key, cipher.nonce, encText
+
+################################################ ENCRYPTIONS ################################################
 
 def textChop(text, i1, i2, i3, i4):
     text1 = text[i1:i2]
@@ -61,17 +69,26 @@ def encrypt(plaintext):
     finalEnc = enc1 + enc2 + enc3
     finalMsg = finalNonce + finalEnc
 
-    recepient_key = RSA.import_key(open("receiver.pem").read())
-    cipher_rsa = PKCS1_OAEP.new(recepient_key)
-    encKey = cipher_rsa.encrypt(finalKey)
+    masterKey, masterNonce, encKey = enc_Salsa(finalKey)
+
+    keyMsg = masterNonce + encKey
+
+    # recepient_key = RSA.import_key(open("owner_receiver.pem").read())
+    # private_key = RSA.import_key(open("owner_private.pem").read())
+    # cipher_rsa = PKCS1_OAEP.new(private_key)
+    # encKey = cipher_rsa.encrypt(finalKey)
 
     data_out = open("encrypted_data.bin", "wb")
     data_out.write(finalMsg)
     data_out.close()
 
     key_out = open("encrypted_key.bin", "wb")
-    key_out.write(encKey)
+    key_out.write(keyMsg)
     key_out.close()
+
+    mKey_out = open("masterKey.bin", "wb")
+    mKey_out.write(masterKey)
+    mKey_out.close()
 
 file_upload = open("FileToUpload.txt", "rb")
 myText = file_upload.read()
