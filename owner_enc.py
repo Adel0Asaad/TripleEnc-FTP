@@ -39,26 +39,30 @@ def enc_Salsa(ptext):
 
 ################################################ ENCRYPTIONS ################################################
 
-def textChop(text, i1, i2, i3, i4):
-    text1 = text[i1:i2]
-    text2 = text[i2:i3]
-    text3 = text[i3:i4]
+def textChop(text):
+
+    text1 = text2 = text3 = b''
+    for myByte in [ text[x].to_bytes(1,"big") for x in range(len(text)) if x%3==0 ]:
+        text1 += myByte
+    for myByte in [ text[x].to_bytes(1,"big") for x in range(len(text)) if x%3==1 ]:
+        text2 += myByte
+    for myByte in [ text[x].to_bytes(1,"big") for x in range(len(text)) if x%3==2 ]:
+        text3 += myByte
+
     return text1, text2, text3
+
+def textRePerm(text):
+    myBArr = bytearray(text)
+    for x in range(len(text)):
+        myBArr[(x*3)%len(text)] = text[x]
+    text = b''
+    for myByte in myBArr:
+        text += myByte.to_bytes(1, "big")
+    return text
 
 def encrypt(plaintext):
     
-    if(len(plaintext) % 3 == 1):
-        cLen = len(plaintext) - 1  #Cropped length
-    elif(len(plaintext) % 3 == 2):
-        cLen = len(plaintext) - 2  #Cropped length
-    else:
-        cLen = len(plaintext)      #Cropped length
-    
-    chacha_start_index = 0
-    chacha_end_index = cLen//3
-    aes_end_index = cLen*2//3 
-    des_end_index = len(plaintext)
-    msg1, msg2, msg3 = textChop(plaintext, chacha_start_index, chacha_end_index, aes_end_index, des_end_index)
+    msg1, msg2, msg3 = textChop(plaintext)
     
     key1, nonce1, enc1 = enc_ChaCha(msg1)
     key2, nonce2, enc2 = enc_AES(msg2)
@@ -66,17 +70,13 @@ def encrypt(plaintext):
     
     finalKey = key1 + key2 + key3
     finalNonce = nonce1 + nonce2 + nonce3
-    finalEnc = enc1 + enc2 + enc3
+    prepermEnc = enc1 + enc2 + enc3
+    finalEnc = textRePerm(prepermEnc)
     finalMsg = finalNonce + finalEnc
 
     masterKey, masterNonce, encKey = enc_Salsa(finalKey)
 
     keyMsg = masterNonce + encKey
-
-    # recepient_key = RSA.import_key(open("owner_receiver.pem").read())
-    # private_key = RSA.import_key(open("owner_private.pem").read())
-    # cipher_rsa = PKCS1_OAEP.new(private_key)
-    # encKey = cipher_rsa.encrypt(finalKey)
 
     data_out = open("encrypted_data.bin", "wb")
     data_out.write(finalMsg)
