@@ -55,8 +55,10 @@ def download():
     # quit and close the connection 
     ftp.quit()
 
-def print_hello():
-    messagebox.showinfo("Message", "hi")
+
+
+# def print_uploaded():
+#     messagebox.showinfo("Message", "hi")
 
 def on_enter(e):
     e.widget['background'] = "#075ea1"
@@ -64,28 +66,7 @@ def on_enter(e):
 def on_leave(e):
     e.widget['background'] = 'SystemButtonFace'
 
-
-
 def textApp():
-
-    # window = tk.Tk()
-    # window.title("Team 28 Client")
-    # window.rowconfigure(0, minsize=800, weight=1)
-    # window.columnconfigure(1, minsize=800, weight=1)
-
-    # txt_edit = tk.Text(window, bg="#242424", fg="#FFFFFF", insertbackground="#CCCCCC")
-    # fr_buttons = tk.Frame(window, relief=tk.RAISED, bd=2)
-    # btn_connect = tk.Button(fr_buttons, text="Connect", command= upload)
-    # btn_save = tk.Button(fr_buttons, text="Save As...")
-    # btn_add_text = tk.Button(fr_buttons, text="Insert Hello")
-
-    # btn_connect.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-    # btn_save.grid(row=1, column=0, sticky="ew", padx=5)
-    # btn_add_text.grid(row=2, column=0, sticky="ew", padx=5, pady=10)
-
-    # fr_buttons.grid(row=0, column=0, sticky="ns")
-    
-    
     
     window = tk.Tk()
     window.title("Security Project")
@@ -100,7 +81,7 @@ def textApp():
     team_frame = tk.Frame(window, relief=tk.RAISED, bd=10, bg="#242424")
     team_members_label= tk.Label(team_frame, bg="#242424", fg="#075ea1", text="Team Members", font=("Times New Roman", 32))
     adel_asaad_label= tk.Label(team_frame, bg="#242424", fg="#FFFFFF", text="Adel Asaad - 18P2949", font=("Times New Roman", 18))
-    madonna_bassem_label= tk.Label(team_frame, bg="#242424", fg="#FFFFFF", text="Madonna Bassem -", font=("Times New Roman", 18))
+    madonna_bassem_label= tk.Label(team_frame, bg="#242424", fg="#FFFFFF", text="Madonna Bassem - 185194", font=("Times New Roman", 18))
     mohamed_adel_label= tk.Label(team_frame, bg="#242424", fg="#FFFFFF", text="Mohamed Adel - 18P1724", font=("Times New Roman", 18))
 
     fr_buttons = tk.Frame(window, relief=tk.RAISED, bd=10, bg="#242424")
@@ -128,8 +109,8 @@ def textApp():
 
     team_members_label.place(relx=0.5, rely=0.1, anchor="center")
     adel_asaad_label.place(relx=0.5, rely=0.3, anchor="center")
-    madonna_bassem_label.place(relx=0.5, rely=0.4, anchor="center")
-    mohamed_adel_label.place(relx=0.5, rely=0.5, anchor="center")
+    madonna_bassem_label.place(relx=0.5, rely=0.45, anchor="center")
+    mohamed_adel_label.place(relx=0.5, rely=0.6, anchor="center")
 
     fr_buttons.grid(row=0, column=0, sticky="ns")
     team_frame.grid(row=0, column=1, sticky="nsew")
