@@ -6,6 +6,11 @@ from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP, Salsa20
 
 def ownerSendMKey():
 
+    # Note: We wanted the RSA encryption to be -> private of owner then public of user
+    # to certify the ownership and confidentiality of the package
+    # but python doesn't support public key decryptions
+    # so we cannot decrypt something that is encrypted with the private key of the owner
+
     key_in = open("masterKey.bin", "rb")
     finalKey =  key_in.read()
     key_in.close()
