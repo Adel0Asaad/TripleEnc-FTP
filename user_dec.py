@@ -16,6 +16,7 @@ def ownerSendMKey():
     key_in.close()
 
     recepient_key = RSA.import_key(open("user_receiver.pem").read())
+    print(len(open("user_receiver.pem").read())) # 450 bytes.
     # private_key = RSA.import_key(open("owner_private.pem").read())
     # cipher_rsa_owner_private = PKCS1_OAEP.new(private_key)
     cipher_rsa_user_public = PKCS1_OAEP.new(recepient_key)
@@ -26,7 +27,7 @@ def ownerSendMKey():
     
 
     key_out = open("pp_mKey.bin", "wb")
-    key_out.write(encKey)
+    key_out.write(encKey) # sends a 256 byte key to that file, for now that is, in a bit we need to send this through a socket connection.
     key_out.close()
 
 def userReceiveMKey():
