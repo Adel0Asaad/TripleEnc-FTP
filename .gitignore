@@ -6,3 +6,4 @@ owner_receiver.pem
 owner_private.pem
 user_receiver.pem
 user_private.pem
+loc_master_key.bin

@@ -89,8 +89,8 @@ def textApp():
     lab_upload = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to encrypt & upload the file", font=("Times New Roman", 14))
     lab_download = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to decrypt & download the file", font=("Times New Roman", 14))
     pixelVirtual = tk.PhotoImage(width=1, height=1)
-    btn_upload = tk.Button(fr_buttons, text="Download", command=download, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
-    btn_download = tk.Button(fr_buttons, text="Upload", command=upload, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    btn_download = tk.Button(fr_buttons, text="Download", command=download, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    btn_upload = tk.Button(fr_buttons, text="Upload", command=upload, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
     btn_download.bind("<Enter>", on_enter)
     btn_download.bind("<Leave>", on_leave)
@@ -102,9 +102,9 @@ def textApp():
     imageLabel.image = photo
 
     lab_upload.grid(row=1,column=0, padx=5, pady=(50,20))
-    btn_download.grid(row=2, column=0, padx=5, pady=10)
+    btn_upload.grid(row=2, column=0, padx=5, pady=0)
     lab_download.grid(row=3,column=0, padx=5, pady=(50,20))
-    btn_upload.grid(row=4, column=0, padx=5, pady=0)
+    btn_download.grid(row=4, column=0, padx=5, pady=10)
     imageLabel.grid(row=6, column=0, pady=60)
 
     team_members_label.place(relx=0.5, rely=0.1, anchor="center")

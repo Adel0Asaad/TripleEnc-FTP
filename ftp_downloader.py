@@ -1,12 +1,9 @@
 import ftplib
-# FTP_HOST = "127.0.0.1"
-# FTP_PORT = 6060
-# FTP_USER = "username"
-# FTP_PASS = "P@ssw0rd"
-FTP_HOST = "ftp.byethost14.com"
-FTP_PORT = 21
-FTP_USER = "b14_33366562"
-FTP_PASS = "7odazftt"
+# FTP server credentials
+FTP_HOST = "127.0.0.1"
+FTP_PORT = 6060
+FTP_USER = "username"
+FTP_PASS = "P@ssw0rd"
 # connect to the FTP server
 ftp = ftplib.FTP()
 ftp.connect(FTP_HOST,FTP_PORT)

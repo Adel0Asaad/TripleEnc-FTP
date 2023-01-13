@@ -120,7 +120,11 @@ def decrypt(allKeys):
     finalMsg = textRePerm(msg1+msg2+msg3)
     print(finalMsg.decode("utf-8"))
 
-ownerSendMKey()
-master_key = userReceiveMKey()
-grouped_keys = userDecKeys(master_key)
-decrypt(grouped_keys)
+def mainFunc():
+
+    ownerSendMKey()
+    master_key = userReceiveMKey()
+    grouped_keys = userDecKeys(master_key)
+    decrypt(grouped_keys)
+
+mainFunc()

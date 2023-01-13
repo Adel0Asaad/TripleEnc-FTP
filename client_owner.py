@@ -2,14 +2,9 @@ import socket
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
-
-HEADER = 64
 PORT = 5050
-FORMAT = 'utf-8'
-DISCONNECT_MSG = '!disconnect'
 SERVER = "127.0.0.1"
 ADDR = (SERVER, PORT)
-REQUEST_C_MSG = '!requestconnect'
 
 def getMasterKey():
     key_in = open("masterKey.bin", "rb")
