@@ -39,7 +39,7 @@ def textApp():
     window.mainloop()
 
 
-print('Team Credits are opened in a separate window, which you may close if you want.')
+# print('Team Credits are opened in a separate window, which you may close if you want.')
 
 textThread = threading.Thread(target=textApp)
 textThread.start()
