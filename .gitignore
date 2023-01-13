@@ -1,9 +1,2 @@
-encrypted_data.bin
-encrypted_key.bin
-masterKey.bin
-pp_mKey.bin
-owner_receiver.pem
-owner_private.pem
-user_receiver.pem
-user_private.pem
-loc_master_key.bin
+*.bin
+*.pem

@@ -75,19 +75,11 @@ def decrypt():
 
         ################################################ MasterKey Handling ################################################
 
-    def userReceiveMKey():
+    def userDecKeys():
 
         key_in = open("loc_master_key.bin", "rb")
-        finalKey =  key_in.read()
+        masterKey =  key_in.read()
         key_in.close()
-
-        private_key = RSA.import_key(open("user_private.pem").read())
-        cipher_rsa_user_private = PKCS1_OAEP.new(private_key)
-        mKey = cipher_rsa_user_private.decrypt(finalKey)
-        
-        return mKey
-
-    def userDecKeys(masterKey):
 
         keys_in = open("encrypted_key.bin", "rb")
         masterNonce, encKey = \
@@ -162,11 +154,11 @@ def decrypt():
         finalMsg = textRePerm(msg1+msg2+msg3)
         print(finalMsg.decode("utf-8"))
 
-    master_key = userReceiveMKey()
-    grouped_keys = userDecKeys(master_key)
+    grouped_keys = userDecKeys()
     dec_logic(grouped_keys)
 
-
+def downloadThread():
+    threading.Thread(target=download).start()
 
 def download():
     # FTP server credentials
@@ -181,10 +173,14 @@ def download():
     # force UTF-8 encoding 
     ftp.encoding = "utf-8" 
     # the name of file you want to download from the FTP server 
-    filename = "FileToUpload.txt" 
-    with open("Downloaded File", "wb") as file: 
-        # use FTP's RETR command to download the file 
-        ftp.retrbinary(f"RETR {filename}", file.write) 
+    
+    file1 = "encrypted_data.bin" 
+    file2 = "encrypted_key.bin"
+    with open(file1, "wb") as file: 
+        # use FTP's STOR command to upload the file 
+        ftp.retrbinary(f"RETR {file1}", file.write) 
+    with open(file2, "wb") as file:
+        ftp.retrbinary(f"RETR {file2}", file.write)
     # quit and close the connection 
     ftp.quit()
 
@@ -215,11 +211,11 @@ def textApp():
     # lab_team = tk.Label (fr_buttons, text="Team 28", fg="#075ea1", bg="#000000", font=("Times New Roman", 25, tk.UNDERLINE))
     pixelVirtual = tk.PhotoImage(width=1, height=1)
     lab_download = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to download the file", font=("Times New Roman", 14))
-    btn_download = tk.Button(fr_buttons, text="Download", command=download, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    btn_download = tk.Button(fr_buttons, text="Download", command=downloadThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
     lab_master = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to request the Master key", font=("Times New Roman", 14))
     btn_master = tk.Button(fr_buttons, text="Request Key", command=initConnThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
     lab_decrypt = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to decrypt the file", font=("Times New Roman", 14))
-    btn_decrypt = tk.Button(fr_buttons, text="Decrypt", command=initConnThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    btn_decrypt = tk.Button(fr_buttons, text="Decrypt", command=decryptThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
     lab_clear = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to clear the terminal screen", font=("Times New Roman", 14))
     btn_clear = tk.Button(fr_buttons, text="Clear", command=clear, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")

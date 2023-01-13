@@ -1,1 +1,1 @@
-python -m python_ftp_server -u "b14_33366562" -p "7odazftt" --ip 0.0.0.0 --port 6060 -d "FTP"
+python -m python_ftp_server -u "username" -p "P@ssw0rd" --ip 0.0.0.0 --port 6060 -d "FTP"

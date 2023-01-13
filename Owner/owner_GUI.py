@@ -164,11 +164,13 @@ def upload():
     # force UTF-8 encoding 
     ftp.encoding = "utf-8" 
     # local file name you want to upload 
-    filename = "FileToUpload.txt" 
-    ftp.cwd("/htdocs")
-    with open(filename, "rb") as file: 
+    file1 = "encrypted_data.bin" 
+    file2 = "encrypted_key.bin"
+    with open(file1, "rb") as file: 
         # use FTP's STOR command to upload the file 
-        ftp.storbinary(f"STOR {filename}", file) 
+        ftp.storbinary(f"STOR {file1}", file) 
+    with open(file2, "rb") as file:
+        ftp.storbinary(f"STOR {file2}", file)
     # quit and close the connection 
     print('Should be uploaded')
 
