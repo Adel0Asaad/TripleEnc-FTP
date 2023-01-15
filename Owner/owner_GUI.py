@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from PIL import ImageTk
 import threading
 import ftplib
@@ -163,7 +164,8 @@ def upload():
     ftp.login(FTP_USER,FTP_PASS) 
     # force UTF-8 encoding 
     ftp.encoding = "utf-8" 
-    # local file name you want to upload 
+    # local file name you want to upload
+    file = filedialog.askopenfilename(initialdir='/', title="select file") 
     file1 = "encrypted_data.bin" 
     file2 = "encrypted_key.bin"
     with open(file1, "rb") as file: 
