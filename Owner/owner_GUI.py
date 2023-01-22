@@ -150,6 +150,10 @@ def encrypt():
         ext_out.write(extension.encode("utf-8"))
         ext_out.close()
 
+        ext_out = open("file_name.txt", "wb")
+        ext_out.write(file_name.encode("utf-8"))
+        ext_out.close()
+
         data_out = open("encrypted_data.bin", "wb")
         data_out.write(finalMsg)
         data_out.close()
@@ -163,20 +167,25 @@ def encrypt():
         mKey_out.close()
         print("File encrypted..")
 
-    file = filedialog.askopenfilename(initialdir=getcwd(), title="select file") 
+    file = filedialog.askopenfilename(initialdir="E:\AAAA SENIOR 2\Security\Project\TripleEnc-FTP\Owner", title="select file") 
     # file_upload = open("FileToUpload.txt", "rb")
-    print(file)
-    extension = file.split('/')[len(file.split('/'))-1]
+    print (file)
+    # extension = file.split('/')[len(file.split('.'))]
+    file_name = file.split('/')[(len(file.split('/'))-1)].split('.')[0]
+    extension = file.split('/')[(len(file.split('/'))-1)].split('.')[1]
     print(extension)
     file_upload = open(file, "rb")
     myText = file_upload.read()
     file_upload.close()
     enc_logic(myText)
+    upload()
 
-def uploadThread():
-    threading.Thread(target=upload).start()
+######Legacy Code#######  
+# def uploadThread():
+#     threading.Thread(target=upload).start()
 
 def upload():
+
     # FTP server credentials
     FTP_HOST = "127.0.0.1"
     FTP_PORT = 6060
@@ -192,6 +201,7 @@ def upload():
     file1 = "encrypted_data.bin" 
     file2 = "encrypted_key.bin"
     file3 = "extension_type.txt"
+    file4 = "file_name.txt"
     with open(file1, "rb") as file: 
         # use FTP's STOR command to upload the file 
         ftp.storbinary(f"STOR {file1}", file) 
@@ -199,6 +209,8 @@ def upload():
         ftp.storbinary(f"STOR {file2}", file)
     with open(file3, "rb") as file:
         ftp.storbinary(f"STOR {file3}", file)
+    with open(file4, "rb") as file:
+        ftp.storbinary(f"STOR {file4}", file)
     # quit and close the connection 
     ftp.quit()
     print('File uploaded..')
@@ -212,12 +224,12 @@ def on_leave(e):
 def textApp():
     
     window = tk.Tk()
-    window.title("Owner Client")
-    window.rowconfigure(0, minsize=600, weight=1)
+    window.title("Owner Interface")
+    window.rowconfigure(0, minsize=400, weight=1)
     window.columnconfigure(1, minsize=200, weight=1)
     # window.protocol("WM_DELETE_WINDOW", on_closing)
-    window.geometry("800x600")
-    window.minsize(800, 600)
+    window.geometry("800x400")
+    window.minsize(800, 400)
     window.resizable(False, False)
 
     # txt_edit = tk.CustomText(window, bg="#242424", fg="#FFFFFF", insertbackground="#DDDDDD", wrap= tk.WORD, font=("Consolas", 13), state=tk.DISABLED)
@@ -226,15 +238,15 @@ def textApp():
     fr_buttons = tk.Frame(window, relief=tk.RAISED, bd=10, bg="#242424")
     # lab_team = tk.Label (fr_buttons, text="Team 28", fg="#075ea1", bg="#000000", font=("Times New Roman", 25, tk.UNDERLINE))
     pixelVirtual = tk.PhotoImage(width=1, height=1)
-    lab_upload = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to upload the file", font=("Times New Roman", 14))
-    btn_upload = tk.Button(fr_buttons, text="Upload", command=uploadThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    # lab_upload = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to upload the file", font=("Times New Roman", 14))
+    # btn_upload = tk.Button(fr_buttons, text="Upload", command=uploadThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
     lab_master = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to listen for a user (to send a master key)", font=("Times New Roman", 14))
     btn_master = tk.Button(fr_buttons, text="Listen", command=initConnThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
-    lab_encrypt = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to encrypt the file", font=("Times New Roman", 14))
+    lab_encrypt = tk.Label (fr_buttons, bg="#242424",fg="#FFFFFF", text="Press to encrypt & upload the file", font=("Times New Roman", 14))
     btn_encrypt = tk.Button(fr_buttons, text="Encrypt", command=encryptThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
-    btn_upload.bind("<Enter>", on_enter)
-    btn_upload.bind("<Leave>", on_leave)
+    # btn_upload.bind("<Enter>", on_enter)
+    # btn_upload.bind("<Leave>", on_leave)
     btn_master.bind("<Enter>", on_enter)
     btn_master.bind("<Leave>", on_leave)
     btn_encrypt.bind("<Enter>", on_enter)
@@ -246,11 +258,11 @@ def textApp():
 
     lab_encrypt.grid(row=1,column=0, padx=5, pady=(50,20))
     btn_encrypt.grid(row=2, column=0, padx=5, pady=0)
-    lab_upload.grid(row=3,column=0, padx=5, pady=(50,20))
-    btn_upload.grid(row=4, column=0, padx=5, pady=0)
-    lab_master.grid(row=5,column=0, padx=5, pady=(50,20))
+    # lab_upload.grid(row=3,column=0, padx=5, pady=(50,20))
+    # btn_upload.grid(row=4, column=0, padx=5, pady=0)
+    lab_master.grid(row=5,column=0, padx=5, pady=(80,20))
     btn_master.grid(row=6, column=0, padx=5, pady=0)
-    imageLabel.grid(row=0, column=0, padx=95, pady=320)
+    imageLabel.grid(row=0, column=0, padx=95, pady=80)
 
     fr_buttons.grid(row=0, column=0, sticky="ns")
     team_frame.grid(row=0, column=1, sticky="nsew")

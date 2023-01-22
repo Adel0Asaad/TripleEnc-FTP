@@ -17,11 +17,21 @@ def runDwdFileThread():
 
 def runDwdFile():
     file_in = open("extension_type.txt", "rb")
-    fileName = file_in.read().decode("utf-8")
+    filename_in = open("file_name.txt", "rb")
+    # fileNameFinal = (filename_in.read().decode) + (file_in.read().decode("utf-8"))
+    fileNameTxt = filename_in.read().decode("utf-8")
+    print ("file name is : ")
+    print (fileNameTxt)
+    fileExtTxt = file_in.read().decode("utf-8")
     file_in.close()
-    fileName = '"' + fileName + '"'
+    filename_in.close()
+    # print("WE ARE DOWNLOADING")
+    fileNameFinal = fileNameTxt + "." + fileExtTxt
+    print("File name final is: ")
+    print(fileNameFinal)
     system("cd Downloads")
-    system(fileName)
+    # open(fileNameFinal, "r")
+    system(fileNameFinal)
 
 def initConnThread():
     threading.Thread(target=initConn).start()
@@ -165,10 +175,10 @@ def decrypt():
             file_out = open(extTxt, "wb")
             file_out.write(finalMsg)
             file_out.close()
-            if(myExt == "txt"):
+            if(extTxt == "txt"):
                 print(finalMsg.decode("utf-8"))
-            else:
-                print("File was decrypted, but isn't a text file, please open it manually.")
+            # else:
+            #     print("File was decrypted, but isn't a text file, please open it manually.")
 
         data_in = open("encrypted_data.bin", "rb")
         nonce1, nonce2, nonce3, allEnc = \
@@ -181,12 +191,19 @@ def decrypt():
         msg3 =    dec_DES(key3, nonce3, enc3)
         
         ext_in = open("extension_type.txt", "rb")
+        filename_in = open("file_name.txt", "rb")
         extBin = ext_in.read()
+        filenameBin = filename_in.read()
         ext_in.close()
+        filename_in.close()
         extTxt = extBin.decode("utf-8")
-        myExt = extTxt.split(".")[len(extTxt.split("."))-1]
+        fileNameTxt = filenameBin.decode("utf-8")
+        # myExt = extTxt.split(".")[len(extTxt.split("."))-1]
+        # print(extTxt)
+        # print(fileNameTxt)
+        # print(myExt)
         
-        extTxt = "Downloads/"+extTxt
+        extTxt = "Downloads/"+ fileNameTxt + "." + extTxt
         finalMsg = textRePerm(msg1, msg2, msg3)
         try:
             makeDownloadedFile()
@@ -219,6 +236,7 @@ def download():
     file1 = "encrypted_data.bin" 
     file2 = "encrypted_key.bin"
     file3 = "extension_type.txt"
+    file4 = "file_name.txt"
     with open(file1, "wb") as file: 
         # use FTP's STOR command to upload the file 
         ftp.retrbinary(f"RETR {file1}", file.write) 
@@ -226,6 +244,8 @@ def download():
         ftp.retrbinary(f"RETR {file2}", file.write)
     with open(file3, "wb") as file:
         ftp.retrbinary(f"RETR {file3}", file.write)
+    with open(file4, "wb") as file:
+        ftp.retrbinary(f"RETR {file4}", file.write)
     # quit and close the connection 
     ftp.quit()
     print("File downloaded..")
@@ -242,12 +262,12 @@ def on_leave(e):
 def textApp():
     
     window = tk.Tk()
-    window.title("User Client")
-    window.rowconfigure(0, minsize=600, weight=1)
+    window.title("User Interface")
+    window.rowconfigure(0, minsize=400, weight=1)
     window.columnconfigure(1, minsize=200, weight=1)
     # window.protocol("WM_DELETE_WINDOW", on_closing)
-    window.geometry("800x600")
-    window.minsize(800, 600)
+    window.geometry("600x400")
+    window.minsize(600, 400)
     window.resizable(False, False)
 
     # txt_edit = tk.CustomText(window, bg="#242424", fg="#FFFFFF", insertbackground="#DDDDDD", wrap= tk.WORD, font=("Consolas", 13), state=tk.DISABLED)
@@ -263,8 +283,8 @@ def textApp():
     lab_decrypt = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to decrypt the file", font=("Times New Roman", 14))
     btn_decrypt = tk.Button(fr_buttons, text="Decrypt", command=decryptThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
-    lab_runDwdFile = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to open/run your downloaded file", font=("Times New Roman", 14))
-    btn_runDwdFile = tk.Button(fr_buttons, text="Run", command=runDwdFileThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    # lab_runDwdFile = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to open/run your downloaded file", font=("Times New Roman", 14))
+    # btn_runDwdFile = tk.Button(fr_buttons, text="Run", command=runDwdFileThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
     btn_download.bind("<Enter>", on_enter)
     btn_download.bind("<Leave>", on_leave)
@@ -272,23 +292,23 @@ def textApp():
     btn_master.bind("<Leave>", on_leave)
     btn_decrypt.bind("<Enter>", on_enter)
     btn_decrypt.bind("<Leave>", on_leave)
-    btn_runDwdFile.bind("<Enter>", on_enter)
-    btn_runDwdFile.bind("<Leave>", on_leave)
+    # btn_runDwdFile.bind("<Enter>", on_enter)
+    # btn_runDwdFile.bind("<Leave>", on_leave)
 
     photo = ImageTk.PhotoImage(file= "ASUENG Logo.png")
     imageLabel = tk.Label(team_frame, bg="#242424", image = photo)
     imageLabel.image = photo
 
-    lab_download.grid(row=1,column=0, padx=5, pady=(50,20))
+    lab_download.grid(row=1,column=0, padx=5, pady=(20,20))
     btn_download.grid(row=2, column=0, padx=5, pady=0)
     lab_master.grid(row=3,column=0, padx=5, pady=(50,20))
     btn_master.grid(row=4, column=0, padx=5, pady=0)
     lab_decrypt.grid(row=5,column=0, padx=5, pady=(50,20))
     btn_decrypt.grid(row=6, column=0, padx=5, pady=0)
-    lab_runDwdFile.grid(row=7,column=0, padx=5, pady=(50,20))
-    btn_runDwdFile.grid(row=8, column=0, padx=5, pady=0)
+    # lab_runDwdFile.grid(row=7,column=0, padx=5, pady=(50,20))
+    # btn_runDwdFile.grid(row=8, column=0, padx=5, pady=0)
 
-    imageLabel.grid(row=0, column=0, padx=95, pady=320)
+    imageLabel.grid(row=0, column=0, padx=50, pady=80)
 
     fr_buttons.grid(row=0, column=0, sticky="ns")
     team_frame.grid(row=0, column=1, sticky="nsew")
