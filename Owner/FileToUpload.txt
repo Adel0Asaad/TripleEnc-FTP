@@ -1,1 +1,0 @@
-This is my text file, that I will be uploading to the FTP server, and that will be encrypted with three different algorithms.

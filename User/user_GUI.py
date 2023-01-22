@@ -6,16 +6,24 @@ import socket
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP, Salsa20
 import time
-from os import system
+from os import system, mkdir
 
 #
 #   Our GUI thread (text editor application)
 #
 
-def clear():
-    system("cls")
+def runDwdFileThread():
+    threading.Thread(target=runDwdFile).start()
 
-def initConnThread(): # TODO: create a function like this for each command below (download/upload) in case it takes too much time, we don't want it to clog the GUI
+def runDwdFile():
+    file_in = open("extension_type.txt", "rb")
+    fileName = file_in.read().decode("utf-8")
+    file_in.close()
+    fileName = '"' + fileName + '"'
+    system("cd Downloads")
+    system(fileName)
+
+def initConnThread():
     threading.Thread(target=initConn).start()
 
 def initConn():
@@ -95,19 +103,25 @@ def decrypt():
     ################################################     DECRYPTIONS    ################################################
 
     def dec_ChaCha(key, nonce, ctext):
-
+        # print("------------------------------CHACHA------------------------------")
+        # print(key, ctext)
+        # print("")
         cipher = ChaCha20_Poly1305.new(key=key, nonce=nonce)
         ptext = cipher.decrypt(ctext)
         return ptext
 
     def dec_AES(key, nonce, ctext):
-
+        # print("------------------------------AES------------------------------")
+        # print(key, ctext)
+        # print("")
         cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
         ptext = cipher.decrypt(ctext)
         return ptext
 
     def dec_DES(key, nonce, ctext):
-
+        # print("------------------------------DES------------------------------")
+        # print(key, ctext)
+        # print("")
         cipher = DES.new(key, DES.MODE_EAX, nonce=nonce)
         ptext = cipher.decrypt(ctext)
         return ptext
@@ -115,7 +129,7 @@ def decrypt():
     ################################################     DECRYPTIONS    ################################################
 
     def textChop(keys, text):
-
+        
         text1 = text2 = text3 = b''
         for myByte in [ text[x].to_bytes(1,"big") for x in range(len(text)) if x%3==0 ]:
             text1 += myByte
@@ -123,36 +137,64 @@ def decrypt():
             text2 += myByte
         for myByte in [ text[x].to_bytes(1,"big") for x in range(len(text)) if x%3==2 ]:
             text3 += myByte
-
+       
         key1, key2, key3 = \
             [ keys[x:y] for x,y in ((0, 32), (32, 48), (48, 56)) ]
 
         return key1, key2, key3, text1, text2, text3
 
-    def textRePerm(text):
-        myBArr = bytearray(text)
-        for x in range(len(text)):
-            myBArr[(x*3)%len(text)] = text[x]
-        text = b''
-        for myByte in myBArr:
-            text += myByte.to_bytes(1, "big")
-        return text
-
+    def textRePerm(text1, text2, text3):
+        myBArr = bytearray(text1+text2+text3)
+        allSize = len(myBArr)
+        x = y = z = 0
+        for i in range(allSize):
+            if(i%3==0):
+                myBArr[i] = text1[x]
+                x += 1
+            elif(i%3==1):
+                myBArr[i] = text2[y]
+                y += 1
+            else:
+                myBArr[i] = text3[z]
+                z += 1
+        return myBArr
+    
     def dec_logic(allKeys):
         
+        def makeDownloadedFile():
+            file_out = open(extTxt, "wb")
+            file_out.write(finalMsg)
+            file_out.close()
+            if(myExt == "txt"):
+                print(finalMsg.decode("utf-8"))
+            else:
+                print("File was decrypted, but isn't a text file, please open it manually.")
+
         data_in = open("encrypted_data.bin", "rb")
         nonce1, nonce2, nonce3, allEnc = \
             [ data_in.read(x) for x in (12, 16, 16, -1) ]
         data_in.close()
 
         key1, key2, key3, enc1, enc2, enc3 = textChop(allKeys, allEnc)
-        
         msg1 = dec_ChaCha(key1, nonce1, enc1)
         msg2 =    dec_AES(key2, nonce2, enc2)
         msg3 =    dec_DES(key3, nonce3, enc3)
-
-        finalMsg = textRePerm(msg1+msg2+msg3)
-        print(finalMsg.decode("utf-8"))
+        
+        ext_in = open("extension_type.txt", "rb")
+        extBin = ext_in.read()
+        ext_in.close()
+        extTxt = extBin.decode("utf-8")
+        myExt = extTxt.split(".")[len(extTxt.split("."))-1]
+        
+        extTxt = "Downloads/"+extTxt
+        finalMsg = textRePerm(msg1, msg2, msg3)
+        try:
+            makeDownloadedFile()
+        except Exception as e:
+            
+            if(e.__class__.__name__ == "FileNotFoundError"):
+                mkdir("Downloads")
+                makeDownloadedFile()
 
     grouped_keys = userDecKeys()
     dec_logic(grouped_keys)
@@ -176,13 +218,17 @@ def download():
     
     file1 = "encrypted_data.bin" 
     file2 = "encrypted_key.bin"
+    file3 = "extension_type.txt"
     with open(file1, "wb") as file: 
         # use FTP's STOR command to upload the file 
         ftp.retrbinary(f"RETR {file1}", file.write) 
     with open(file2, "wb") as file:
         ftp.retrbinary(f"RETR {file2}", file.write)
+    with open(file3, "wb") as file:
+        ftp.retrbinary(f"RETR {file3}", file.write)
     # quit and close the connection 
     ftp.quit()
+    print("File downloaded..")
 
 # def print_uploaded():
 #     messagebox.showinfo("Message", "hi")
@@ -217,8 +263,8 @@ def textApp():
     lab_decrypt = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to decrypt the file", font=("Times New Roman", 14))
     btn_decrypt = tk.Button(fr_buttons, text="Decrypt", command=decryptThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
-    lab_clear = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to clear the terminal screen", font=("Times New Roman", 14))
-    btn_clear = tk.Button(fr_buttons, text="Clear", command=clear, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    lab_runDwdFile = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to open/run your downloaded file", font=("Times New Roman", 14))
+    btn_runDwdFile = tk.Button(fr_buttons, text="Run", command=runDwdFileThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
     btn_download.bind("<Enter>", on_enter)
     btn_download.bind("<Leave>", on_leave)
@@ -226,8 +272,8 @@ def textApp():
     btn_master.bind("<Leave>", on_leave)
     btn_decrypt.bind("<Enter>", on_enter)
     btn_decrypt.bind("<Leave>", on_leave)
-    btn_clear.bind("<Enter>", on_enter)
-    btn_clear.bind("<Leave>", on_leave)
+    btn_runDwdFile.bind("<Enter>", on_enter)
+    btn_runDwdFile.bind("<Leave>", on_leave)
 
     photo = ImageTk.PhotoImage(file= "ASUENG Logo.png")
     imageLabel = tk.Label(team_frame, bg="#242424", image = photo)
@@ -239,8 +285,8 @@ def textApp():
     btn_master.grid(row=4, column=0, padx=5, pady=0)
     lab_decrypt.grid(row=5,column=0, padx=5, pady=(50,20))
     btn_decrypt.grid(row=6, column=0, padx=5, pady=0)
-    lab_clear.grid(row=7,column=0, padx=5, pady=(50,20))
-    btn_clear.grid(row=8, column=0, padx=5, pady=0)
+    lab_runDwdFile.grid(row=7,column=0, padx=5, pady=(50,20))
+    btn_runDwdFile.grid(row=8, column=0, padx=5, pady=0)
 
     imageLabel.grid(row=0, column=0, padx=95, pady=320)
 

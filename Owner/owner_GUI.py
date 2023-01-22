@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from PIL import ImageTk
 import threading
 import ftplib
@@ -6,7 +7,7 @@ import socket
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP, ChaCha20_Poly1305, AES, DES, Salsa20
 from Crypto.Random import get_random_bytes
-from os import system
+from os import system, getcwd
 
 #
 #   Our GUI thread (text editor application)
@@ -63,6 +64,9 @@ def encrypt():
         #Encryption
         cipher = ChaCha20_Poly1305.new(key=key)
         encText = cipher.encrypt(ptext)
+        # print("------------------------------CHACHA------------------------------")
+        # print(key, encText)
+        # print("")
         return key, cipher.nonce, encText
 
     def enc_AES(ptext):
@@ -71,6 +75,9 @@ def encrypt():
         #Encryption
         cipher = AES.new(key, AES.MODE_EAX)
         encText = cipher.encrypt(ptext)
+        # print("------------------------------AES------------------------------")
+        # print(key, encText)
+        # print("")
         return key, cipher.nonce, encText
 
     def enc_DES(ptext):
@@ -79,6 +86,9 @@ def encrypt():
         #Encryption
         cipher = DES.new(key, DES.MODE_EAX)
         encText = cipher.encrypt(ptext)
+        # print("------------------------------DES------------------------------")
+        # print(key, encText)
+        # print("")
         return key, cipher.nonce, encText
 
     ########## MasterKey Enc ##########
@@ -104,14 +114,21 @@ def encrypt():
 
         return text1, text2, text3
 
-    def textRePerm(text):
-        myBArr = bytearray(text)
-        for x in range(len(text)):
-            myBArr[(x*3)%len(text)] = text[x]
-        text = b''
-        for myByte in myBArr:
-            text += myByte.to_bytes(1, "big")
-        return text
+    def textRePerm(text1, text2, text3):
+        myBArr = bytearray(text1+text2+text3)
+        allSize = len(myBArr)
+        x = y = z = 0
+        for i in range(allSize):
+            if(i%3==0):
+                myBArr[i] = text1[x]
+                x += 1
+            elif(i%3==1):
+                myBArr[i] = text2[y]
+                y += 1
+            else:
+                myBArr[i] = text3[z]
+                z += 1
+        return myBArr
 
     def enc_logic(plaintext):
         
@@ -123,13 +140,15 @@ def encrypt():
         
         finalKey = key1 + key2 + key3
         finalNonce = nonce1 + nonce2 + nonce3
-        prepermEnc = enc1 + enc2 + enc3
-        finalEnc = textRePerm(prepermEnc)
+        finalEnc = textRePerm(enc1, enc2, enc3)
         finalMsg = finalNonce + finalEnc
-
         masterKey, masterNonce, encKey = enc_Salsa(finalKey)
 
         keyMsg = masterNonce + encKey
+
+        ext_out = open("extension_type.txt", "wb")
+        ext_out.write(extension.encode("utf-8"))
+        ext_out.close()
 
         data_out = open("encrypted_data.bin", "wb")
         data_out.write(finalMsg)
@@ -142,8 +161,14 @@ def encrypt():
         mKey_out = open("masterKey.bin", "wb")
         mKey_out.write(masterKey)
         mKey_out.close()
+        print("File encrypted..")
 
-    file_upload = open("FileToUpload.txt", "rb")
+    file = filedialog.askopenfilename(initialdir=getcwd(), title="select file") 
+    # file_upload = open("FileToUpload.txt", "rb")
+    print(file)
+    extension = file.split('/')[len(file.split('/'))-1]
+    print(extension)
+    file_upload = open(file, "rb")
     myText = file_upload.read()
     file_upload.close()
     enc_logic(myText)
@@ -163,18 +188,20 @@ def upload():
     ftp.login(FTP_USER,FTP_PASS) 
     # force UTF-8 encoding 
     ftp.encoding = "utf-8" 
-    # local file name you want to upload 
+    # local file name you want to upload
     file1 = "encrypted_data.bin" 
     file2 = "encrypted_key.bin"
+    file3 = "extension_type.txt"
     with open(file1, "rb") as file: 
         # use FTP's STOR command to upload the file 
         ftp.storbinary(f"STOR {file1}", file) 
     with open(file2, "rb") as file:
         ftp.storbinary(f"STOR {file2}", file)
+    with open(file3, "rb") as file:
+        ftp.storbinary(f"STOR {file3}", file)
     # quit and close the connection 
-    print('Should be uploaded')
-
     ftp.quit()
+    print('File uploaded..')
 
 def on_enter(e):
     e.widget['background'] = "#075ea1"
@@ -185,7 +212,7 @@ def on_leave(e):
 def textApp():
     
     window = tk.Tk()
-    window.title("Security Project")
+    window.title("Owner Client")
     window.rowconfigure(0, minsize=600, weight=1)
     window.columnconfigure(1, minsize=200, weight=1)
     # window.protocol("WM_DELETE_WINDOW", on_closing)
