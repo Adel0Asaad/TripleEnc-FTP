@@ -6,7 +6,7 @@ import socket
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import ChaCha20_Poly1305, AES, DES, PKCS1_OAEP, Salsa20
 import time
-from os import system, mkdir
+from os import system, mkdir, getcwd
 
 #
 #   Our GUI thread (text editor application)
@@ -20,18 +20,13 @@ def runDwdFile():
     filename_in = open("file_name.txt", "rb")
     # fileNameFinal = (filename_in.read().decode) + (file_in.read().decode("utf-8"))
     fileNameTxt = filename_in.read().decode("utf-8")
-    print ("file name is : ")
-    print (fileNameTxt)
     fileExtTxt = file_in.read().decode("utf-8")
     file_in.close()
     filename_in.close()
     # print("WE ARE DOWNLOADING")
-    fileNameFinal = fileNameTxt + "." + fileExtTxt
-    print("File name final is: ")
-    print(fileNameFinal)
-    system("cd Downloads")
-    # open(fileNameFinal, "r")
+    fileNameFinal = "Downloads\\" + fileNameTxt + "." + fileExtTxt
     system(fileNameFinal)
+
 
 def initConnThread():
     threading.Thread(target=initConn).start()
@@ -263,11 +258,11 @@ def textApp():
     
     window = tk.Tk()
     window.title("User Interface")
-    window.rowconfigure(0, minsize=400, weight=1)
+    window.rowconfigure(0, minsize=600, weight=1)
     window.columnconfigure(1, minsize=200, weight=1)
     # window.protocol("WM_DELETE_WINDOW", on_closing)
-    window.geometry("600x400")
-    window.minsize(600, 400)
+    window.geometry("800x600")
+    window.minsize(800, 600)
     window.resizable(False, False)
 
     # txt_edit = tk.CustomText(window, bg="#242424", fg="#FFFFFF", insertbackground="#DDDDDD", wrap= tk.WORD, font=("Consolas", 13), state=tk.DISABLED)
@@ -283,8 +278,8 @@ def textApp():
     lab_decrypt = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to decrypt the file", font=("Times New Roman", 14))
     btn_decrypt = tk.Button(fr_buttons, text="Decrypt", command=decryptThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
-    # lab_runDwdFile = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to open/run your downloaded file", font=("Times New Roman", 14))
-    # btn_runDwdFile = tk.Button(fr_buttons, text="Run", command=runDwdFileThread, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
+    lab_runDwdFile = tk.Label (fr_buttons, bg="#242424", fg="#FFFFFF", text="Press to open/run your downloaded file", font=("Times New Roman", 14))
+    btn_runDwdFile = tk.Button(fr_buttons, text="Run", command=runDwdFile, width=90, compound="c", image=pixelVirtual, bg="#a6a6a6")
 
     btn_download.bind("<Enter>", on_enter)
     btn_download.bind("<Leave>", on_leave)
@@ -292,8 +287,8 @@ def textApp():
     btn_master.bind("<Leave>", on_leave)
     btn_decrypt.bind("<Enter>", on_enter)
     btn_decrypt.bind("<Leave>", on_leave)
-    # btn_runDwdFile.bind("<Enter>", on_enter)
-    # btn_runDwdFile.bind("<Leave>", on_leave)
+    btn_runDwdFile.bind("<Enter>", on_enter)
+    btn_runDwdFile.bind("<Leave>", on_leave)
 
     photo = ImageTk.PhotoImage(file= "ASUENG Logo.png")
     imageLabel = tk.Label(team_frame, bg="#242424", image = photo)
@@ -305,8 +300,8 @@ def textApp():
     btn_master.grid(row=4, column=0, padx=5, pady=0)
     lab_decrypt.grid(row=5,column=0, padx=5, pady=(50,20))
     btn_decrypt.grid(row=6, column=0, padx=5, pady=0)
-    # lab_runDwdFile.grid(row=7,column=0, padx=5, pady=(50,20))
-    # btn_runDwdFile.grid(row=8, column=0, padx=5, pady=0)
+    lab_runDwdFile.grid(row=7,column=0, padx=5, pady=(50,20))
+    btn_runDwdFile.grid(row=8, column=0, padx=5, pady=0)
 
     imageLabel.grid(row=0, column=0, padx=50, pady=80)
 
